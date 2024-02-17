@@ -3,17 +3,26 @@
     {
       "id": 0,
       "name": "Kamrul",
+      "email": "kamrul@gamil.com",
       "age": 20
     },
     {
       "id": 1,
       "name": "Jamal",
+      "email": "jamal@gmail.com",
       "age": 25
     },
     {
       "id": 2,
       "name": "Lamal",
+      "email": "lamal@gamil.com",
       "age": 39
+    },
+    {
+      "id": 3,
+      "name": "Riya",
+      "email": "riya@gmail.com",
+      "age": 19
     }
   ]
 }

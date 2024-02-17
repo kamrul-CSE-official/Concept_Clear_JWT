@@ -19,7 +19,7 @@ export const routes = createBrowserRouter([
         element: <About />,
       },
       {
-        path: "/userDetails/:id",
+        path: "/userDetails/:email",
         element: <UserDetails />,
       },
       {

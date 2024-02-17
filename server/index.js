@@ -43,6 +43,27 @@ app.get("/private", verifyToken, async (req, res) => {
   res.send({ message: "success", status: 200, data: privateData });
 });
 
+app.get("/userDetails/:email", verifyToken, async (req, res) => {
+  const requestEmail = req.params.email;
+  const tokenEmail = req.user.email;
+  console.log(tokenEmail);
+  if (requestEmail !== tokenEmail) {
+    return res.status(403).send({ message: "Fordiden User" });
+  }
+
+  const userData = privateData.users.find(
+    (user) => user.email === requestEmail
+  );
+
+  if (userData) {
+    res.status(200).send({ message: "success", status: 200, data: userData });
+  } else {
+    res.status(404).json({ error: "User not found" });
+  }
+});
+  
+  
+
 // Authentication route
 app.post("/jwt", (req, res) => {
   const user = req.body;
