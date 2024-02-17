@@ -3,8 +3,10 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const privateData = require("./db.json");
 
 dotenv.config();
+const port = process.env.PORT || 5000;
 
 const app = express();
 
@@ -13,12 +15,32 @@ app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
 
-const port = process.env.PORT || 5000;
+const verifyToken = async (req, res, next) => {
+  const token = req.cookies?.token;
+  console.log("from verify: ", token);
+  if (!token) {
+    return res.status(401).send({ message: "not authorized" });
+  }
+  const secret = process.env.ACCESS_TOKEN_SECRET;
+  jwt.verify(token, secret, (err, decoded) => {
+    if (err) {
+      return res.status(401).send({ message: "not authorized" });
+    }
+    console.log("Decoded: ", decoded);
+    req.user = decoded;
+    next();
+  });
+};
 
 // Routes
 app.get("/", (req, res) => {
   console.log("Token from client:", req.cookies.token);
   res.send({ message: "Learn JWT." });
+});
+
+app.get("/private", verifyToken, async (req, res) => {
+  console.log("provate: ", req.user);
+  res.send({ message: "success", status: 200, data: privateData });
 });
 
 // Authentication route
