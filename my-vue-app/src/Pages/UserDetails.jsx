@@ -1,20 +1,17 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import useAxiosSecrure from "../hooks/useAxiosSecrure";
 
 const UserDetails = () => {
   const { email } = useParams();
   const [data, setData] = useState(null);
+  const axiosSecure = useAxiosSecrure();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:5000/userDetails/${email}`,
-          {
-            withCredentials: true,
-          }
-        );
+        const res = await axiosSecure.get(`/userDetails/${email}`);
+
         setData(res?.data?.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -22,7 +19,7 @@ const UserDetails = () => {
     };
 
     fetchData();
-  }, []);
+  }, [email, axiosSecure]);
 
   return (
     <div>
