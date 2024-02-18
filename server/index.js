@@ -47,6 +47,8 @@ app.get("/userDetails/:email", verifyToken, async (req, res) => {
   const requestEmail = req.params.email;
   const tokenEmail = req.user.email;
   console.log(tokenEmail);
+  const headers = req.headers.authorization;
+  console.log(headers);
   if (requestEmail !== tokenEmail) {
     return res.status(403).send({ message: "Fordiden User" });
   }
