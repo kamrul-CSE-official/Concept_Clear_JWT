@@ -1,20 +1,29 @@
 import axios from "axios";
 import { useEffect } from "react";
 
-
-
 const axiosSecure = axios.create({
   baseURL: "http://localhost:5000",
   withCredentials: true,
-
-  headers: {
-    Authorization: "Bearer " + localStorage.getItem("accessToken"),
-  },
 });
 
 const useAxiosSecure = () => {
   useEffect(() => {
-    const interceptor = axiosSecure.interceptors.response.use(
+    const requestInterceptor = axiosSecure.interceptors.request.use(
+      (config) => {
+        const accessToken = localStorage.getItem("accessToken");
+        if (accessToken) {
+          config.headers.Authorization = `Bearer ${accessToken}`;
+        }
+        console.log("Request: ", config);
+        return config;
+      },
+      (error) => {
+        console.error("Request error:", error.message);
+        return Promise.reject(error);
+      }
+    );
+
+    const responseInterceptor = axiosSecure.interceptors.response.use(
       (response) => {
         console.log("Response: ", response?.data?.status);
         if (response?.data?.status === 200) {
@@ -22,13 +31,12 @@ const useAxiosSecure = () => {
         } else if (response?.data?.status === 401) {
           const newAccessToken = response?.data?.accessToken;
           localStorage.setItem("accessToken", newAccessToken);
-          // Retry the original request with the new access token
           return axiosSecure.request(response.config);
         }
         return Promise.reject(response);
       },
       (error) => {
-        console.log("Error tracked in the interceptor: ", error.message);
+        console.error("Response error:", error.message);
         if (
           error.response &&
           (error.response.status === 401 || error.response.status === 403)
@@ -39,9 +47,10 @@ const useAxiosSecure = () => {
       }
     );
 
-    // Clean up interceptor on unmount
+    // Clean up interceptors on unmount
     return () => {
-      axiosSecure.interceptors.response.eject(interceptor);
+      axiosSecure.interceptors.request.eject(requestInterceptor);
+      axiosSecure.interceptors.response.eject(responseInterceptor);
     };
   }, []);
 
