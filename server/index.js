@@ -17,12 +17,18 @@ app.use(express.json());
 
 // Function to generate refresh token
 function generateRefreshToken(data) {
-  return jwt.sign(data, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "50h" });
+  return jwt.sign(data, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: "50h",
+    algorithm: "HS384",
+  });
 }
 
 // Function to generate access token
 function generateAccessToken(data) {
-  return jwt.sign(data, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1h" });
+  return jwt.sign(data, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: "1h",
+    algorithm: "HS512",
+  });
 }
 
 // Middleware to verify refresh token
