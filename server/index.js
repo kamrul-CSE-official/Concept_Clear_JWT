@@ -22,7 +22,7 @@ function generateRefreshToken(data) {
 
 // Function to generate access token
 function generateAccessToken(data) {
-  return jwt.sign(data, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "20s" });
+  return jwt.sign(data, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1h" });
 }
 
 // Middleware to verify refresh token
