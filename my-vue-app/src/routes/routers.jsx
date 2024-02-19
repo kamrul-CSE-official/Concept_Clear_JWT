@@ -4,6 +4,7 @@ import Home from "../Pages/Home";
 import About from "../Pages/About";
 import UserDetails from "../Pages/UserDetails";
 import Login from "../Pages/Login";
+import UInfo from "../Pages/UInfo";
 
 export const routes = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ export const routes = createBrowserRouter([
       {
         path: "/userDetails/:email",
         element: <UserDetails />,
+      },
+      {
+        path: "/info",
+        element: <UInfo />,
       },
       {
         path: "/login",

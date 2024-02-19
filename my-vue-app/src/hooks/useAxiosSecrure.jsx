@@ -11,10 +11,10 @@ const useAxiosSecure = () => {
     const requestInterceptor = axiosSecure.interceptors.request.use(
       (config) => {
         const accessToken = localStorage.getItem("accessToken");
+        console.log("Requesting with old access token...", accessToken);
         if (accessToken) {
           config.headers.Authorization = `Bearer ${accessToken}`;
         }
-        console.log("Request: ", config);
         return config;
       },
       (error) => {
@@ -25,23 +25,24 @@ const useAxiosSecure = () => {
 
     const responseInterceptor = axiosSecure.interceptors.response.use(
       (response) => {
-        console.log("Response: ", response?.data?.status);
-        if (response?.data?.status === 200) {
-          return response;
-        } else if (response?.data?.status === 401) {
-          const newAccessToken = response?.data?.accessToken;
-          localStorage.setItem("accessToken", newAccessToken);
-          return axiosSecure.request(response.config);
-        }
-        return Promise.reject(response);
+        console.log("From axios response: ", response);
+        return response;
       },
-      (error) => {
+      async (error) => {
         console.error("Response error:", error.message);
+        const originalRequest = error.config;
         if (
-          error.response &&
-          (error.response.status === 401 || error.response.status === 403)
+          error.response?.status === 401 &&
+          error.response.data.newAccessToken
         ) {
+          const newAccessToken = error.response.data.newAccessToken;
+          localStorage.setItem("accessToken", newAccessToken);
+          console.log("Requesting with new access token...", newAccessToken);
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+          return axiosSecure(originalRequest);
+        } else if (error.response?.status === 403) {
           console.log("Logout the user");
+          // Perform logout logic here
         }
         return Promise.reject(error);
       }

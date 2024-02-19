@@ -1,31 +1,25 @@
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import axios from "axios";
-import { useEffect, useState } from "react";
-function Login() {
-  const [user, setUser] = useState(null);
+import { Form, Button } from "react-bootstrap";
+import useAxiosSecure from "../hooks/useAxiosSecrure";
 
-  useEffect(() => {
-    async function fetch() {
-      const data = await axios.get("http://localhost:5000", {
-        withCredentials: true,
-      });
-      console.log(data?.data);
-    }
-    fetch();
-  }, []);
+function Login() {
+  const axiosInstance = useAxiosSecure();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setUser({ email: e.target.email.value, password: e.target.password.value });
+    const userData = {
+      email: e.target.email.value,
+      password: e.target.password.value,
+    };
 
-    if (user) {
-      const postUser = await axios.post("http://localhost:5000/jwt", user, {
-        withCredentials: true,
+    try {
+      await axiosInstance.post("/jwt", userData).then((res) => {
+        localStorage.setItem("accessToken", res?.data?.accessToken);
       });
-      console.log(postUser?.data);
+    } catch (error) {
+      console.error("Login error:", error);
     }
   };
+
   return (
     <Form onSubmit={handleLogin}>
       <Form.Group className="mb-3" controlId="formBasicEmail">

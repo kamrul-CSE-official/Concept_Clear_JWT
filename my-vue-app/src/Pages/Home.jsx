@@ -1,23 +1,22 @@
-import axios from "axios";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import useAxiosSecure from "../hooks/useAxiosSecrure";
 
 const Home = () => {
   const [users, setUsers] = useState([]);
+  const axiosInstance = useAxiosSecure();
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await axios.get("http://localhost:5000/private", {
-          withCredentials: true,
-        });
+        const res = await axiosInstance.get("/private");
         setUsers(res?.data?.data?.users);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     }
     fetchData();
-  }, []);
+  }, [axiosInstance]);
 
   return (
     <div>

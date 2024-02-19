@@ -29,6 +29,7 @@ function ShareNavbar() {
                 <Nav className="justify-content-end flex-grow-1 pe-3 gap-3">
                   <NavLink to="/">Home</NavLink>
                   <NavLink to="/about">About</NavLink>
+                  <NavLink to="/info">Info</NavLink>
                   <NavLink to="/login">Login</NavLink>
                   <NavDropdown
                     title="Private"
